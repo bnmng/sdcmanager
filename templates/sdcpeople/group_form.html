@@ -1,0 +1,207 @@
+{% extends "./_base.html" %}
+
+{% block header %}<h1>{{ person }}</h1>{% endblock %}
+
+{% block submenu %}
+<ul class="menubar" id="ul_submenu">
+    <li>Group:</li>
+    <li><a href="{% url "groups" %}" id="a_groups">List</a></li>
+    {% if object.pk is not None %}
+        <li><a href="{% url "group-detail" object.pk %}" id="a_group-detail">Detail</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
+
+{% block content %}
+
+{{ form.errors }}
+<form action="" method="POST" id="form_edit">
+    {% csrf_token %}
+    <div class="section">
+        Group Information
+        <div class="row">
+            <div class="label">
+               Name 
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.name }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Group Type
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.grouptype }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ groupmemberships.management_form }}  
+    <div class="section" id="div_groupmembership-forms">
+        Members 
+        {# the empty form used as a template for javascript #}
+        <div class="section groupmembership_div" id="div_groupmembership-empty" style="display:None">
+            {{ form.id }}
+            <div class="row">
+                <div class="label">
+                    Member
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.person }}  
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Role Type
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.role_type }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Role Name
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.role_name }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete Membership  
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ groupmemberships.empty_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for form in groupmemberships.forms %}
+            <div class="section groupmembership_div">
+                {{ form.id }}
+                Member #{{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        Member
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ form.person }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Role Type
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ form.role_type }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Role Name
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ form.role_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                         Delete Membership #{{ forloop.counter }} 
+                    </div>
+                    <div class="fields">
+                        <div>
+                            {{ form.DELETE }}  Delete
+                        </div>
+                        <div class="field-buttons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" value="Save" id="submit_save">Save</button>
+    {% if object.pk is not None %}
+        <button type="button" onclick="window.location.href='{% url 'group-delete' object.pk %}'">Delete</button>
+    {% endif %}
+</form>
+{% endblock %}
+{% block localscripts %}
+<script type="text/javascript">
+
+    var newNum = document.getElementsByClassName('groupmembership_div').length;
+
+    function add_groupmembership_form(e) {
+        var newFormDiv = document.getElementById("div_groupmembership-empty").cloneNode(true);
+        tagNames = ['input', 'select', 'label'];
+        attrNames = ['name', 'id', 'for'];
+        for (t = 0; t < tagNames.length; t++ ) {
+            for ( a = 0; a < attrNames.length; a++ ) {
+                controls = newFormDiv.getElementsByTagName(tagNames[t]);
+                for ( c = 0; c < controls.length; c++ ) {
+                    for ( a = 0; a < attrNames.length; a++ ) {
+                        if ( controls[c].getAttribute(attrNames[a]) ) {
+                            controls[c].setAttribute(attrNames[a], controls[c].getAttribute(attrNames[a]).replace('__prefix__', newNum) );
+                        }
+                    }
+                }
+            }
+        }
+        newNum++;
+        newFormDiv.style.display="Block";
+        newFormDiv.addEventListener('change', add_groupmembership_form );
+        groupmembership_divs[groupmembership_divs.length - 1].removeEventListener('change', add_groupmembership_form );
+        document.getElementById("div_groupmembership-forms").appendChild(newFormDiv);
+        document.getElementById("id_groupmembership_set-TOTAL_FORMS").value = document.getElementsByClassName('groupmembership_div').length;
+    }
+
+    function add_event_add_groupmembership_form() {
+        groupmembership_divs = document.getElementsByClassName("groupmembership_div");
+        groupmembership_divs[groupmembership_divs.length - 1].addEventListener('change', add_groupmembership_form );
+    }
+
+    {# add items to the sub-menu #} 
+    {# AND takes precident, so the following line evaluates as  if (group.pk is None and perms.sdcpeople.add_group) or (group.pk is not None and perms.sdcpeople.edit_group) #}
+    {% if group.pk is None and perms.sdcpeople.add_group or group.pk is not None and perms.sdcpeople.edit_group %}
+        var edit = document.createTextNode("Save");
+        var a = document.createElement("a");
+        a.setAttribute('id', 'a_edit');
+        a.setAttribute('href', '#');
+        a.addEventListener('click', function(event) {
+            event.preventDefault;
+            document.getElementById("form_edit").submit();
+        });
+        a.appendChild(edit);
+        var li = document.createElement("li");
+        li.appendChild(a)
+        document.getElementById("ul-submenu").append(li);
+    {% endif %}
+
+    {# this has to be done because some browsers don't reset the TOTAL_FORMS field upon refresh #}
+    document.getElementById("id_groupmembership_set-TOTAL_FORMS").value = document.getElementsByClassName('groupmembership_div').length;
+
+    add_event_add_groupmembership_form();
+
+    
+</script>
+{% endblock %}

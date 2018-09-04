@@ -1,0 +1,299 @@
+{% extends "./_base.html" %}
+
+{% block pagetitle %}<h2>{{ person }}</h2>{% endblock %}
+
+{% block pagemenu %}
+<li><a href="{% url 'sdcpeople' %}" id="a_sdcpeople">List</a></li>
+    {% if perms.sdcpeople.add_person %}
+<li><a href="{% url 'person-create' %}" id="a_person-create">Add</a></li>
+    {% endif %}
+    {% if perms.sdcpeople.change_person %}
+<li><a href="{% url 'person-update' person.id  %}" id="a_person-update">Edit</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="section">
+    <div class="title">Names &amp; Birthday</div>
+    <div class="row">
+        <div class="label">
+            Title
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.title }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            First Name
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.first_name }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Middle Names
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.middle_names }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Last Name
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.last_name }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Suffixes
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.suffixes }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Prefered Name
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.prefered_name }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Certificate Name
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.certificate_name }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Letter Name
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.letter_name }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Date of Birth
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.birth_date }}
+            </div>
+        </div>
+    </div>
+</div>       
+<div class="section">
+    <div class="title">Membership</div>
+    <div class="row">
+        <div class="label">
+            Membershp Type
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.membershiptype }}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section">
+    <div class="title">Addresses</div>
+    <div class="row">
+        <div class="label">
+            Voting Address
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.voting_address }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="label">
+            Mailing Address
+        </div>
+        <div class="fields">
+            <div class="field">
+                {{ person.mailing_address }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="title">Voice Phones</div>
+    {% for vox in person.vox_set.all %}
+        <!--- tp27f759 phones -->
+        <div class="section">
+            <div class="title">Phone #{{ forloop.counter }}</div>
+            <div class="row">
+                <div class="label">
+                    Number
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ vox.number }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ vox.primary }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <div class="title">Messaging </div>
+    {% for txtmsg in person.txtmsg_set.all %} 
+        <div class="section">
+            <div class="title">Phone #{{ forloop.counter }}</div>
+            <div class="row">
+                <div class="label">
+                    Number
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ txtmsg.number }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ txtmsg.primary }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <div class="title">Emails</div>
+    {% for email in person.email_set.all %}
+        <div class="section">
+            <div class="title">Email #{{ forloop.counter }}</div>
+            <div class="row">
+                <div class="label">
+                    Address
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ email.address }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ email.primary }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <div class="title">Districts</div>
+    {% for residency in person.residency_set.all %}
+        <div class="row">
+            <div class="label">
+                {{ residency.district.districttype.name }}
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ residency.district.name }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <div class="title">Groups/ Committees</div>
+    {% for groupmembership in person.groupmembership_set.all %}
+        <div class="row">
+            <div class="label">
+                {{ groupmembership.group.grouptype.name }}
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ groupmembership.group.name }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="section">
+    <div class="title">Applications</div>
+    {% for application in person.application_set.all %}
+        <div class="section">
+            <div class="title">Application #{{ forloop.counter }}</div>
+            <div class="row">
+                <div class="label">
+                    Date
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ application.date_submitted }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Image
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <a data-type="link_to_image" href="{{ application.image.url }}" target="_blank">Image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+{% block localscripts %}
+<script type="text/javascript">
+</script>
+{% endblock %}
+

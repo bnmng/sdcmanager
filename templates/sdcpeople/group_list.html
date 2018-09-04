@@ -1,0 +1,91 @@
+{% extends "./_base.html" %}
+
+{% block header %}<h1>SDCManager: Groups</h1>{% endblock %}
+
+{% block submenu %}
+<ul class="menubar">
+    <li>Groups:</li>
+    {% if perms.sdcpeople.add_person %}
+        <li><a href="{% url 'group-create' %}" id="a_group-create">Add</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
+
+{% block content %}
+
+    {% if group_list %}
+        <table class="list">
+            <thead>
+                <tr>
+                    <th>
+                        Actions
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Membership
+                    </th>
+                    <th>
+                        Districts
+                    </th>
+                    <th>
+                        Phones
+                    </th>
+                    <th>
+                        Emails
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in group_list %}
+                    <tr>
+                        <td>
+                            <div>
+                                <a href="{{ group.get_absolute_url }}">Details</a>
+                            <div>
+                        </td>
+                        <td>
+                            <div>{{ group.name }}</div>
+                        </td>
+                        <td>
+                            <div>{{ person.membership_type }}</div>
+                        </td>
+                        <td>
+                            {% for residency in person.residency_set.all %}
+                                <div>{{ residency.district.districttype.name }}:{{ residency.district.name }}</div>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for phone in person.phone_set.all %}
+                                <div>{{ phone.number }}</div>
+                                    {% if phone.primary_voice or phone.primary_text %}
+                                        <div>&nbsp;
+                                            {% if phone.primary_voice and phone.primary_text %}
+                                                (V&amp;T)
+                                            {% elif phone.primary_voice %}
+                                                (V)
+                                            {% elif phone.primary_text %}
+                                                (T)
+                                            {% endif %}
+                                        </div>
+                                    {% endif %} 
+                                <div>{{ phone.notes }}</div>    
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for email in person.email_set.all %}
+                                <div>{{ email.address }}</div>
+                                    {% if email.primary %} <div>&nbsp;Pri</div> {% endif %}
+                                </div>
+                               <div>{{ email.notes }}</div> 
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+      <p>There are no groups in the list.</p>
+    {% endif %}       
+{% endblock %}

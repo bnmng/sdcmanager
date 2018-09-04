@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="em">
+	<head>
+{% block title %}
+    <title>SDC Manager</title>
+{% endblock %}
+	    <meta charset="utf8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+{% load static %}
+	    <link rel="stylesheet" href="{% static 'sdcpeople/css/styles.css' %}">
+{% block extrahead %}
+{% endblock %}
+	</head>
+
+	<body>
+		<div id="div_maintitle">
+		    <h1>SDC Manager</h1>
+		</div>
+		<div id="div_mainnav" class="menubar">
+		    <ul class="menu">
+{% if user.is_authenticated %}
+		        <li>
+                    {{ user.get_username }}
+		        </li>
+		        <li><a href="{% url 'logout'%}?next={{request.path}}" id="a_logout">Logout</a></li>
+		        <li><a href="{% url 'sdcpeople' %}">People</a>
+		        <li><a href="{% url 'groups' %}">Groups</a>
+{% else %}
+		        <li><a href="{% url 'login'%}?next={{request.path}}" id="a_login">Login</a></li>
+{% endif %}
+		    </ul>
+		</div>
+		<div id="div_pagetitle">
+{% block pagetitle %}
+{% endblock %}
+		</div>
+		<div id="div_pagenav" class="menubar">
+		    <ul class="menu" id="ul_pagemenu">
+{% block pagemenu %}
+{% endblock %}
+		    </ul>
+		</div>
+		<div id="div_content">
+{% block content %}{% endblock %}
+		</div>
+{% block extras %}
+{% endblock %}
+		<script type="text/javascript">
+            var submenu_clone = document.getElementById('div_pagenav').cloneNode(true);
+            var content = document.getElementById('div_content');
+            var children_with_id = submenu_clone.querySelectorAll('*[id]');
+
+            children_with_id.forEach(function(item){
+                item.setAttribute('id', item.getAttribute('id') + '2');
+            });
+            
+            content.parentNode.insertBefore(submenu_clone, content.nextSibling )
+		</script>
+{% block localscripts %} 
+{% endblock %}
+	</body>
+</html>

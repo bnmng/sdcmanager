@@ -1,0 +1,355 @@
+{% extends "./_base.html" %}
+
+{% block pagetitle %}<h2>People</h2>{% endblock %}
+
+{% block pagemenu %}
+    {% if perms.sdcpeople.add_person %}
+        <li><a href="{% url 'person-create' %}" id="a_person-create">Add</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<form action="">
+    <div class="section search" id="div_search">
+        <div class="row">
+            <div class="label">
+                Filter by Name: 
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <input type="checkbox" name="use_filterby_name" id="checkbox_filterby-name" {% if use_filterby_name %} checked="checked" {% endif %}/>
+                </div>
+                <div class="field">
+                    <input name="filterby_name" id="input_filterby-name" value="{{ filterby_name }}" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Filter By Membership Type
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <input type="checkbox" name="use_filterby_membershiptype" id="checkbox_filterby-membershiptype" {% if use_filterby_membershiptype %} checked="checked" {% endif %}/>
+                </div>
+                <div class="field">
+                    <select multiple=multiple name="filterby_membershiptype" id="select_filterby-membershiptype">
+    {% for membershiptype_choice in membershiptype_choices %}
+                        <option value="{{ membershiptype_choice.id }}" 
+        {% if membershiptype_choice.id|stringformat:"i" in filterby_membershiptype %} 
+                            selected="selected" 
+        {% endif %}>
+                            {{ membershiptype_choice.name }}
+                        </option>
+    {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    {% for districttype in districttypes %}
+        <div class="row">
+            <div class="label">
+                Filter By: {{ districttype.name }}
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <input type="checkbox" name="use_filterby_districttypes[{{ districttype.name }}]" id="checkbox_filterby-districttypes[{{ districttype.name }}]" {% if districttype.use %} checked="checked" {% endif %}/>
+                </div>
+                <div class="field">
+                    <select multiple=multiple name="filterby_districttypes[{{ districttype.name }}]" id="select_filterby-districttypes[{{ districttype.name }}]">
+        {% for district_choice in districttype.district_choices %}
+                        <option value="{{ district_choice.id }}" 
+            {% if district_choice.id|stringformat:"i" in districttype.values %} 
+                            selected="selected" 
+            {% endif %}>{{ district_choice.name }}
+                        </option>
+        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+        <div class="row">
+            <div class="label">
+                Filter By: Groups
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <input type="checkbox" name="use_filterby_group" id="checkbox_filterby-group" {% if use_filterby_group %} checked="checked" {% endif %}/>
+                </div>
+                <div class="field" >
+                    <select multiple=multiple name="filterby_group" id="select_filterby-group">
+    {% for group_choice in group_choices %}
+                        <option value="{{ group_choice.id }}" 
+        {% if group_choice.id|stringformat:"i" in group_choice.values %} 
+                            selected="selected" 
+        {% endif %}>
+                            {{ group_choice.name }}
+                        </option>
+    {% endfor %}
+                    </select>
+                </div>
+                    <script type="text/javascript">
+                    </script>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Save Search
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <input type="checkbox" name="savesearch" id="checkbox_savesearch">
+                </div>
+                <div class="field">
+                    Search Name: <input name="savedsearch_name" id="input_savesearch">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Saved Searches
+            </div>
+            <div class="fields">
+                <div class="buttons">
+                    <button type="submit" name="use_savedsearch" id="submit_retrieve-savedsearch">Retrieve</button>
+                </div>
+                <div class="field">
+                    <select id="select_retrieve-savesearch" name="savedsearch">
+                    <option value=""></option>
+    {% for savedsearch_choice in savedsearch_choices %}
+                        <option value="{{ savedsearch_choice.id }}">{{ savedsearch_choice.name }}</option>
+    {% endfor %}
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button type="submit" name="delete_savedsearch" id="submit_delete-savedsearch"/>Delete</button>
+                </div>
+            </div>
+        </div>
+            
+        <div class="row">
+            <div class="label">
+                &nbsp;
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <button type="submit">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    
+    {% if person_list %}
+<table border id="table_list" class="list" width="100%">
+    <thead>
+        <tr>
+            <th class="field_person_actions">
+                Actions
+            </th>
+            <th class="field_person_name">
+                Name
+            </th>
+            <th class="field_person_membership">
+                Membership
+            </th>
+            <th class="field_person_districts">
+                Districts
+            </th>
+            <th class="field_person_contact">
+                Phone/Email
+            </th>
+            <th class="field_person_groups">
+                Groups
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for person in person_list %}
+        <tr>
+            <td>
+                <div>
+                    <a href="{{ person.get_absolute_url }}">Details</a>
+                <div>
+            </td>
+            <td>
+                <div data-columnname="Name">
+                    <div>{{ person.certificate_name }}</div>
+            {% if person.first_name != person.prefered_name and person.prefered_name > '' %}
+                    <div>({{ person.prefered_name }})</div>
+            {% endif %}
+                </div>
+            </td>
+            <td>
+                <div data-columnname="Membership">{{ person.membershiptype }}</div>
+            {% if person.membershiptype.counts_quorum %}
+                <div data-counts_quorum="True">( Quorum Member )</div>
+            {% endif %}
+            </td>
+            <td>
+            {% for residency in person.residency_set.all %}
+                <div>
+                    <div>{{ residency.district.districttype.name }}:</div>
+                    <div data-columnname="{{ residency.district.districttype.name }}">{{ residency.district.name }}</div>
+                </div>
+            {% endfor %}
+            </td>
+            <td>
+                <div data-columnname="Vox">
+            {% with person.vox_set.first as vox %}
+                    {{ vox.number }} (voice)
+            {% endwith %}
+                </div>
+                <div data-columnname="Text">
+            {% with person.txtmsg_set.first as txtmsg %}
+                    {{ txtmsg.number }} (text)
+            {% endwith %}
+                </div>
+                <div data-columnname="Email">
+            {% with person.email_set.first as email %}
+                    {{ email.address }}
+            {% endwith %}
+                </div>
+            </td>
+            <td>
+                <div data-columnname="Groups">
+            {% for groupmembership in person.groupmembership_set.all %}
+                    <div>{{ groupmembership.group.name }}:</div>
+                    <div>
+                {% if groupmembership.role_name > '' %} {{ groupmembership.role_name }} {% else %} {{ groupmembership.get_role_type_display }} {% endif %} 
+                    </div>
+            {% endfor %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div id="div_summary">
+    <div id="div_quorumtotal">
+        Committee Quorum Total: {{ quorum_all_count }}
+    </div>
+</div>
+    {% else %}
+<p>There are no people in the list.</p>
+    {% endif %}       
+{% endblock %}
+{% block extras %}
+<div id="div_specialbuttons">
+    <button id="button_poptable">Table</button>
+    <button id="button_emaillist">Emails</button>
+</div>
+<div id="div_specialdisplay">
+</div>
+{% endblock %}
+{% block localscripts %}
+<script type="text/javascript">
+    
+    var searchFields = ["filterby-name", "filterby-membershiptype", "filterby-group", {% for districttype in districttypes %} "filterby-districttypes[{{ districttype.name }}]", {% endfor %}  "savesearch"];
+
+    function hide_unused_controls( field ) {
+        var prefixes = ["input", "select"];
+        if( document.getElementById("checkbox_" + field ).checked == true ){
+            for( p=0; p<prefixes.length; p++ ){
+                ctrl = document.getElementById(prefixes[p] + "_" + field);
+                if( ctrl ) {
+                    if( ctrl.parentElement.style.display == "none" ) {
+                        if ( ctrl.parentElement.getAttribute('data-olddisplay') ) {
+                            ctrl.parentElement.style.display = ctrl.parentElement.getAttribute('data-olddisplay');
+                        }
+                        else {
+                            ctrl.parentElement.style.display='';
+                        }
+                    }
+                } 
+            }
+        }
+        else {
+            for( p=0; p<prefixes.length; p++ ){
+                ctrl = document.getElementById(prefixes[p] + "_" + field);
+                if( ctrl ) {
+                    ctrl.parentElement.setAttribute('data-olddisplay', ctrl.parentElement.style.display);
+                    ctrl.parentElement.style.display = "none";
+                } 
+            }
+        }
+    }
+
+    function addListenerToCheckbox(field) {
+        document.getElementById('checkbox_' + field).addEventListener('click', function() {
+            hide_unused_controls(field);
+        });
+    }
+
+    for( f=0; f<searchFields.length; f++) {
+        field = searchFields[f];
+        addListenerToCheckbox(field);
+        hide_unused_controls(field);
+    }
+
+    document.getElementById('button_poptable').addEventListener('click', function() {
+        var newDoc=window.open("","List");
+        var table = document.getElementById('table_list');
+        var newTable = document.createElement('table');
+        newTable.setAttribute('style', 'border: 1px solid black');
+
+        var trs = table.getElementsByTagName('tr');
+        newTr=document.createElement('tr');
+        newTr.setAttribute('style', 'border: 1px solid black');
+        var ths = trs[1].querySelectorAll('[data-columnname]');
+        for( d=0; d<ths.length; d++ ) {
+            ColumnName = ths[d].getAttribute('data-columnname');
+            var newTh=document.createElement('th');
+            newTh.setAttribute('style', 'border: 1px solid black');
+            newTh.innerHTML = ColumnName;
+            newTr.appendChild(newTh);
+        }
+        newTable.appendChild(newTr);
+        for( t = 1; t<trs.length; t++ ) {
+            newTr=document.createElement('tr');
+            newTr.setAttribute('style', 'border: 1px solid black');
+            var fields = trs[t].querySelectorAll('[data-columnname]')
+            for( f=0; f<fields.length; f++ ) {
+                var newInner = fields[f].innerText;
+                var newTd=document.createElement('td');
+                newTd.setAttribute('style', 'border: 1px solid black');
+                newTd.innerHTML = newInner;
+                newTr.appendChild(newTd);
+            }
+            newTable.appendChild(newTr);
+        }
+                
+        newDoc.document.open();
+        newBody = newDoc.document.createElement('body');
+        newDoc.document.appendChild(newBody);
+        newBody.appendChild(newTable);
+        newDoc.document.close();
+    });
+
+    document.getElementById('button_emaillist').addEventListener('click', function() {
+        var newDoc=window.open("","List");
+        var emails = document.querySelectorAll('[data-columnname="Email"]');
+        var email_list = '';
+
+        for( e=0; e<emails.length; e++ ) {
+            newInner = emails[e].innerText.trim();
+            if( newInner > '') {
+                email_list = email_list + newInner + '; ';
+            }
+        }
+        newDoc.document.open();
+        newBody = newDoc.document.createElement('body');
+        newDoc.document.appendChild(newBody);
+        newBody.innerText=email_list;
+        newDoc.document.close();
+    });
+
+    var quorum_displayed = document.createElement('div');
+    quorum_displayed.setAttribute('id', 'quorum_displayed');
+    quorum_displayed.innerText="Quorum Members Displayed:" + document.querySelectorAll('[data-counts_quorum]').length;
+    document.getElementById('div_summary').append(quorum_displayed);
+
+</script>
+        
+{% endblock %}

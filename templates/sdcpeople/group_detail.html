@@ -1,0 +1,93 @@
+{% extends "./_base.html" %}
+
+{% block header %}<h1>{{ group }}</h1>{% endblock %}
+
+{% block submenu %}
+<ul class="menubar" id="ul_submenu">
+    <li>Group:</li>
+    <li><a href="{% url 'groups' %}" id="a_groups">List</a></li>
+    {% if perms.sdcpeople.add_group %}
+        <li><a href="{% url 'group-create' %}" id="a_group-create">Add</a></li>
+    {% endif %}
+    {% if perms.sdcpeople.change_group %}
+        <li><a href="{% url 'group-update' group.id  %}" id="a_group-update">Edit</a></li>
+    {% endif %}
+</ul>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="section">
+        Group Information
+        <div class="row">
+            <div class="label">
+                Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ group.name }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Group Type
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ group.grouptype }}
+                </div>
+            </div>
+        </div>
+    </div>       
+
+    <div class="section">
+        Members
+        {% for groupmembership in group.groupmembership_set.all %}
+            <div class="section">
+                Member # {{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        Member
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership.person }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Role Type
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership.role_type }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Role Name
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership.role_name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+                    
+{% endblock %}
+{% block localscripts %}
+<script type="text/javascript">
+
+    function deleterecord() {
+    }
+
+</script>
+{% endblock %}

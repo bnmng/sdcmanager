@@ -1,0 +1,864 @@
+{% extends "./_base.html" %}
+
+{% block pagetitle %}<h2>{{ person }}</h2>{% endblock %}
+
+{% block pagemenu %}
+<li><a href="{% url 'sdcpeople' %}" id="a_sdcpeople">List</a></li>
+{% endblock %}
+
+{% block content %}
+
+{{ form.errors }}
+<form action="" method="POST" id="form_edit" enctype="multipart/form-data" >
+    {% csrf_token %}
+    <div class="section">
+        <div class="title">Names &amp; Birthday</div>
+        <div class="row">
+            <div class="label">
+                Title
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.title }}
+                </div>
+                <div class="help">
+                    {{ form.title.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                First Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.first_name }}
+                </div>
+                <div class="help">
+                    {{ form.first_name.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Middle Names
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.middle_names }}
+                </div>
+                <div class="help">
+                    {{ form.middle_names.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Last Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.last_name }}
+                </div>
+                <div class="help">
+                    {{ form.last_name.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Suffixes
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.suffixes }}
+                </div>
+                <div class="help">
+                    {{ form.suffixes.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Prefered Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.prefered_name }}
+                </div>
+                <div class="help">
+                    {{ form.prefered_name.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Certificate Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.certificate_name }}
+                </div>
+                <div class="field-buttons">
+                    <input type="checkbox" checked="checked"  id="checkbox_certificate-name-fill" >Auto Fill
+                </div>
+                <div class="help">
+                    {{ form.certificate_name.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Letter Name
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.letter_name }}
+                </div>
+                <div class="field-buttons">
+                    <input type="checkbox" checked="checked"  id="checkbox_letter-name-fill" >Auto Fill
+                </div>
+                <div class="help">
+                    {{ form.letter_name.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Date of Birth
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.birth_date }}
+                </div>
+                <div class="help">
+                    {{ form.birth_date.help_text }}
+                </div>
+            </div>
+        </div>
+    </div>       
+    <div class="section">
+        Membership
+        <div class="row">
+            <div class="label">
+                Membershp Type
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.membershiptype }}
+                </div>
+                <div class="help">
+                    {{ form.membershiptype.help_text }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        Addresses
+        <div class="row">
+            <div class="label">
+                Voting Address
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.voting_address }}
+                </div>
+                <div class="help">
+                    {{ form.voting_address.help_text }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">
+                Mailing Address
+            </div>
+            <div class="fields">
+                <div class="field">
+                    {{ form.mailing_address }}
+                </div>
+                <div class="field-buttons">
+                        <button type="button" id="button_mailing-eq-voting">Same</button>
+                </div>
+                <div class="help">
+                    {{ form.mailing_address.help_text }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{ voxes.management_form }}  
+    <div class="section section_parent"  style="padding-left:0; padding-right: 0" id="div_vox-forms">
+        Voice Phones 
+        {% for vox_form in voxes.forms %}
+            {{ vox_form.id }}
+        <div class="section vox_div">
+            Phone #{{ forloop.counter }}
+            <div class="row">
+                <div class="label">
+                    Number
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ vox_form.number }}
+                    </div>
+                    <div class="help">
+                        {{ vox_form.number.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ vox_form.primary }}
+                    </div>
+                    <div class="help">
+                        {{ vox_form.primary.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete Phone #{{ forloop.counter }} 
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ vox_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="section" id="div_vox-add">
+            <div class="row">
+                <div class="label">
+                    Add Phone
+                </div>
+                <div class="fields">
+                    <div class="fields">
+                        <button type="button" id="button_vox-add">Add Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# the empty form used as a template for javascript #}
+        <div class="section vox_div" id="div_vox-empty" style="display:None" >
+            {{ form.id }}
+            <div class="row">
+                <div class="label">
+                    Number
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ voxes.empty_form.number }}
+                    </div>
+                    <div class="help">
+                        {{ voxes.empty_form.number.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ voxes.empty_form.primary }}
+                    </div>
+                    <div class="help">
+                        {{ voxes.empty_form.primary.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete 
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ voxes.empty_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{ txtmsgs.management_form }}  
+    <div class="section" id="div_txtmsg-forms">
+        Text Phones 
+        {% for txtmsg_form in txtmsgs.forms %}
+            {{ txtmsg_form.id }}
+            <div class="section txtmsg_div">
+                Phone #{{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        Number
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ txtmsg_form.number }}
+                        </div>
+                        <div class="help">
+                            {{ txtmsg_form.number.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Is Primary for Text
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ txtmsg_form.primary }}
+                        </div>
+                        <div class="help">
+                            {{ txtmsg_form.primary.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                         Delete Phone #{{ forloop.counter }} 
+                    </div>
+                    <div class="fields">
+                        <div>
+                            {{ txtmsg_form.DELETE }}  Delete
+                        </div>
+                        <div class="field-buttons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="section" id="div_txtmsg-add">
+            <div class="row">
+                <div class="label">
+                    Add Text Phone
+                </div>
+                <div class="fields">
+                    <div class="fields">
+                        <button type="button" id="button_txtmsg-add">Add Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# the empty form used as a template for javascript #}
+        <div class="section txtmsg_div" id="div_txtmsg-empty" style="display:None" >
+            {{ form.id }}
+            <div class="row">
+                <div class="label">
+                    Number
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ txtmsgs.empty_form.number }}
+                    </div>
+                    <div class="help">
+                        {{ txtmsgs.empty_form.number.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary for Text
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ txtmsgs.empty_form.primary }}
+                    </div>
+                    <div class="help">
+                        {{ txtmsgs.empty_form.primary.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete 
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ txtmsgs.empty_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ emails.management_form }}  
+    <div class="section" id="div_email-forms">
+        Email Accounts
+        {% for email_form in emails.forms %}
+            {{ email_form.id }}
+            <div class="section email_div">
+                Email #{{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        Adress
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ email_form.address }}
+                        </div>
+                        <div class="help">
+                            {{ email_form.address.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Is Primary
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ email_form.primary }}
+                        </div>
+                        <div class="help">
+                            {{ email_form.primary.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                         Delete Email #{{ forloop.counter }} 
+                    </div>
+                    <div class="fields">
+                        <div>
+                            {{ email_form.DELETE }}  Delete
+                        </div>
+                        <div class="field-buttons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="section" id="div_email-add">
+            <div class="row">
+                <div class="label">
+                    Add Email Account
+                </div>
+                <div class="fields">
+                    <div class="fields">
+                        <button type="button" id="button_email-add">Add Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# the empty form used as a template for javascript #}
+        <div class="section email_div" id="div_email-empty" style="display:None" >
+            {{ form.id }}
+            <div class="row">
+                <div class="label">
+                    Address
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ emails.empty_form.number }}
+                    </div>
+                    <div class="help">
+                        {{ emails.empty_form.number.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Is Primary 
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ emails.empty_form.primary }}
+                    </div>
+                    <div class="help">
+                        {{ emails.empty_form.primary.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete 
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ emails.empty_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{ residencies.management_form }}
+    <div class="section" id="div_residencies-forms">
+        Districts
+        {% for residency_form in residencies.forms %}
+            {{ residency_form.id }}
+            <div class="row">
+                <div class="label">
+                    {{ residency_form.districttype_name.value }}
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ residency_form.district }}
+                    </div>
+                    <div class="help">
+                        {{ residency_form.district.help_text }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ groupmemberships.management_form }}
+    <div class="section" id="div_groupmembership-forms">
+        Groups
+        {% for groupmembership_form in groupmemberships.forms %}
+            {{ groupmembership_form.id }}
+            <div class="section groupmembership_div">
+                Group #{{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        {{ groupmembership_form.group.label }}
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership_form.group }}
+                        </div>
+                        <div class="help">
+                            {{ groupmembership_form.group.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        {{ groupmembership_form.role_type.label }}
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership_form.role_type }}
+                        </div>
+                        <div class="help">
+                            {{ groupmembership_form.role_type.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        {{ groupmembership_form.role_name.label }}
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ groupmembership_form.role_name }}
+                        </div>
+                        <div class="help">
+                            {{ groupmembership_form.role_name.help_text }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="section" id="div_groupmembership-add">
+            <div class="row">
+                <div class="label">
+                    Add Group
+                </div>
+                <div class="fields">
+                    <div class="fields">
+                        <button type="button" id="button_groupmembership-add">Add Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# the empty form used as a template for javascript #}
+        <div class="section groupmembership_div"  id="div_groupmembership-empty" style="display:None">
+            Group #{{ forloop.counter }}
+            <div class="row">
+                <div class="label">
+                    {{ groupmemberships.empty_form.group.label }}
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.group }}
+                    </div>
+                    <div class="help">
+                        {{ groupmemberships.empty_form.group.help_text }}
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    {{ groupmemberships.empty_form.role_type.label }}
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.role_type }}
+                    </div>
+                    <div class="help">
+                        {{ groupmemberships.empty_form.role_type.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    {{ groupmemberships.empty_form.role_name.label }}
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ groupmemberships.empty_form.role_name }}
+                    </div>
+                    <div class="help">
+                        {{ groupmemberships.empty_form.role_name.help_text }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ applications.management_form }}  
+    <div class="section" id="div_applications-forms">
+        Application
+        {% for application_form in applications.forms %}
+            {{ application_form.id }}
+            <div class="section application_div">
+                Application #{{ forloop.counter }}
+                <div class="row">
+                    <div class="label">
+                        Date
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ application_form.date_submitted }}
+                        </div>
+                        <div class="help">
+                            {{ application_form.date_submitted.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                        Image
+                    </div>
+                    <div class="fields">
+                        <div class="field">
+                            {{ application_form.image }}
+                        </div>
+                        <div class="help">
+                            {{ application_form.image.help_text }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">
+                         Delete Application #{{ forloop.counter }} 
+                    </div>
+                    <div class="fields">
+                        <div>
+                            {{ application_form.DELETE }}  Delete
+                        </div>
+                        <div class="field-buttons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="section" id="div_application-add">
+            <div class="row">
+                <div class="label">
+                    Add Application
+                </div>
+                <div class="fields">
+                    <div class="fields">
+                        <button type="button" id="button_application-add">Add Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# the empty form used as a template for javascript #}
+        <div class="section application_div" id="div_application-empty" style="display:None" >
+            {{ form.id }}
+            <div class="row">
+                <div class="label">
+                    Date Submitted
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ applications.empty_form.date_submitted }}
+                    </div>
+                    <div class="help">
+                        {{ applications.empty_form.date_submitted.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                    Image
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ applications.empty_form.image }}
+                    </div>
+                    <div class="help">
+                        {{ applications.empty_form.image.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
+                     Delete 
+                </div>
+                <div class="fields">
+                    <div>
+                        {{ applications.empty_form.DELETE }}  Delete
+                    </div>
+                    <div class="field-buttons">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                
+    <button type="submit" value="Save" id="submit_save">Save</button>
+    {% if object.pk is not None %}
+    <button type="button" onclick="window.location.href='{% url 'person-delete' object.pk %}'">Delete</button>
+    {% endif %}
+</form>
+{% endblock %}
+{% block localscripts %}
+<script type="text/javascript">
+
+
+    var modelNames = ["application", "vox", "txtmsg", "email", "groupmembership"];
+    var certificate_name_changed = false;
+    var letter_name_changed = false;
+
+    function add_inline_form(e) {
+        var modelName = '';
+
+        var counter=0;
+
+        for (i=0; i<modelNames.length; i++ ) {
+            if (e.currentTarget.id == 'button_' + modelNames[i] + '-add') {
+                modelName = modelNames[i];
+            }
+        }
+        formCount=document.getElementsByClassName(modelName + '_div').length;
+
+        var newFormDiv = document.getElementById('div_' + modelName + '-empty').cloneNode(true);
+        tagNames = ['input', 'select', 'label'];
+        attrNames = ['name', 'id', 'for'];
+        for (t = 0; t < tagNames.length; t++ ) {
+            for ( a = 0; a < attrNames.length; a++ ) {
+                controls = newFormDiv.getElementsByTagName(tagNames[t]);
+                for ( c = 0; c < controls.length; c++ ) {
+                    for ( a = 0; a < attrNames.length; a++ ) {
+                        if ( controls[c].getAttribute(attrNames[a]) ) {
+                            controls[c].setAttribute(attrNames[a], controls[c].getAttribute(attrNames[a]).replace('__prefix__', formCount-1) );
+                        }
+                    }
+                }
+            }
+        }
+        newFormDiv.style.display="block";
+        document.getElementById('div_' + modelName + '-forms').insertBefore(newFormDiv, document.getElementById('div_' + modelName + '-add'));
+        document.getElementById('id_' + modelName + '_set-TOTAL_FORMS').value = formCount;
+    }
+
+    function fill_in_names () {
+        fill_in_certificate_name();
+        fill_in_letter_name();
+    }
+    
+    function fill_in_certificate_name (  ) {
+        if( document.getElementById('checkbox_certificate-name-fill').checked == true ) {
+            var target_name = 'id_certificate_name';
+            var source_names = [ 'id_title', 'id_first_name', 'id_middle_names', 'id_last_name', 'id_suffixes' ];
+            fill_in( target_name, source_names );
+        }
+    }
+
+    function fill_in_letter_name (  ) {
+        if( document.getElementById('checkbox_letter-name-fill').checked == true ) {
+            var target_name = 'id_letter_name';
+            var source_names = [ 'id_title', 'id_last_name' ];
+            fill_in( target_name, source_names );
+        }
+    }
+
+    function fill_in( target, source_names ) {
+        var fill_in_value = '';
+        var sourcelen = source_names.length;
+        for ( l = 0; l < sourcelen; l++ ) {
+            newval = document.getElementById( source_names[l] ).value;
+            if ( newval > '' ) {
+                if ( fill_in_value > '' ) {
+                    fill_in_value = fill_in_value + ' ';
+                }
+                fill_in_value = fill_in_value + newval;
+            }
+        }
+        document.getElementById( target ).value = fill_in_value;
+    }
+
+    function copy_mailing_from_voting() {
+        document.getElementById( 'id_mailing_address' ).value = document.getElementById( 'id_voting_address' ).value;
+    }
+
+    function copy_prefered_from_first() {
+        document.getElementById( 'id_prefered_name' ).value = document.getElementById( 'id_first_name' ).value;
+    }
+
+    
+    for(i=0; i<modelNames.length; i++) {
+        document.getElementById('button_' + modelNames[i] + '-add').addEventListener('click', add_inline_form);
+    }
+
+
+    function deleterecord() {
+    }
+
+
+    document.getElementById('id_certificate_name').addEventListener('keydown', function() { document.getElementById('checkbox_certificate-name-fill').checked = false });
+    document.getElementById('id_letter_name').addEventListener('keydown', function() { document.getElementById('checkbox_letter-name-fill').checked = false });
+    document.getElementById('id_title').addEventListener('keydown', fill_in_names);
+    document.getElementById('id_title').addEventListener('change', fill_in_names);
+    document.getElementById('id_first_name').addEventListener('keydown', fill_in_names);
+    document.getElementById('id_first_name').addEventListener('change', fill_in_names);
+    document.getElementById('id_middle_names').addEventListener('keydown', fill_in_names);
+    document.getElementById('id_middle_names').addEventListener('change', fill_in_names);
+    document.getElementById('id_last_name').addEventListener('keydown', fill_in_names);
+    document.getElementById('id_last_name').addEventListener('change', fill_in_names);
+    document.getElementById('id_suffixes').addEventListener('keydown', fill_in_names);
+    document.getElementById('id_suffixes').addEventListener('change', fill_in_names);
+    document.getElementById('button_mailing-eq-voting').addEventListener('click', copy_mailing_from_voting );
+
+    {# AND takes precident, so this evaluates as  if (person.pk is None and perms.sdcpeople.add_person) or (person.pk is not None and perms.sdcpeople.edit_person) #}
+    {% if person.pk is None and perms.sdcpeople.add_person or person.pk is not None and perms.sdcpeople.edit_person %}
+            
+        var edit = document.createTextNode("Save");
+        var a = document.createElement("a");
+        a.setAttribute('id', 'a_edit');
+        a.setAttribute('href', '#');
+        a.appendChild(edit);
+        var li = document.createElement("li");
+        li.appendChild(a)
+        document.getElementById("ul_pagemenu").append(li);
+        a.addEventListener('click', function(event) {
+            event.preventDefault;
+            document.getElementById("form_edit").submit();
+        });
+            
+    {% endif %}
+        
+</script>
+{{ form.media }}
+{% endblock %}
