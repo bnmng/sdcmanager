@@ -738,6 +738,7 @@
 
 
     var modelNames = ["application", "vox", "txtmsg", "email", "groupmembership"];
+
     var certificate_name_changed = false;
     var letter_name_changed = false;
 
@@ -825,6 +826,45 @@
 
     function deleterecord() {
     }
+
+    function correct_date( event ) {
+
+        var month;
+        var dayofmonth;
+
+        var new_date = new Date ( event.target.value );
+        if ( !isNaN( new_date ) ) {
+            getdate = new_date.getDate();
+            chardate = getdate > 9 ? "" + getdate : "0" + getdate;
+            getmonth = new_date.getMonth() + 1;
+            charmonth = getmonth > 9 ? "" + getmonth : "0" + getmonth;
+            event.target.value = new_date.getFullYear() + '-' + charmonth  + '-' + chardate;
+        }
+        else {
+            alert ("Unable to parse that date")
+        }
+    }
+    var correctabledates = document.querySelectorAll('[data-fieldtype="date"]');
+    for ( cd = 0; cd<correctabledates.length; cd++) {
+        correctabledates[cd].addEventListener('change', function(event) {
+            correct_date(event);
+        });
+    }
+
+    function correct_phone( event ) {
+
+        var phone = event.target.value ;
+        var new_phone = phone.replace(/.*(\d{3})[\)\s\-]*(\d{3})[\s\-]*(\d{4})/,"$1-$2\-$3");
+        event.target.value = new_phone;
+    }
+
+    var correctablephones = document.querySelectorAll('[data-fieldtype="phone"]');
+    for ( cd = 0; cd<correctablephones.length; cd++) {
+        correctablephones[cd].addEventListener('change', function(event) {
+            correct_phone(event);
+        });
+    }
+
 
 
     document.getElementById('id_certificate_name').addEventListener('keydown', function() { document.getElementById('checkbox_certificate-name-fill').checked = false });

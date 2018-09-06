@@ -1,4 +1,3 @@
-from bnmng_widgets.widgets import AltClearableFileFieldWidget, CorrectingDateInput, CorrectingPhoneInput
 from .models import Application, District, DistrictType, Email, Group, GroupMembership, Roster, RosterPlacement, Person, Residency, Txtmsg, Vox
 from django import forms
 from django.core.exceptions import ValidationError
@@ -10,7 +9,6 @@ import copy
 from django.forms.widgets import CheckboxSelectMultiple
     
 class PersonForm(ModelForm):
-    birth_date=forms.DateField(widget=CorrectingDateInput)
     class Meta:
         model = Person
         fields = [
@@ -29,6 +27,9 @@ class PersonForm(ModelForm):
             'lcvid',
             'membershiptype',
         ]
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'data-fieldtype': 'date'}),
+        }
 
         localized_fields = ('birth_date',)
         
@@ -36,7 +37,6 @@ class PersonForm(ModelForm):
 ## Person owned Models (12m) ##
 
 class VoxForm(ModelForm):
-    number=forms.CharField(widget=CorrectingPhoneInput)
     class Meta:
         model = Vox
         fields=[
@@ -45,9 +45,11 @@ class VoxForm(ModelForm):
             'restrict',
             'notes',
         ]
+        widgets = {
+            'number': forms.DateInput(attrs={'data-fieldtype': 'phone'}),
+        }
 
 class TxtmsgForm(ModelForm):
-    number=forms.CharField(widget=CorrectingPhoneInput)
     class Meta:
         model = Txtmsg
         fields=[
@@ -56,6 +58,9 @@ class TxtmsgForm(ModelForm):
             'restrict',
             'notes',
         ]
+        widgets = {
+            'number': forms.DateInput(attrs={'data-fieldtype': 'phone'}),
+        }
 
 class ResidencyForm(ModelForm):
     districttype_name = forms.CharField( required=False )
@@ -74,8 +79,6 @@ class GroupMembershipForm(ModelForm):
         )
 
 class ApplicationForm(ModelForm):
-    image=forms.ImageField(widget=AltClearableFileFieldWidget( attrs={'target': '_blank'}))
-    date_submitted=forms.DateField(widget=CorrectingDateInput)
     class Meta:
         model = Application
         fields = (
@@ -83,6 +86,9 @@ class ApplicationForm(ModelForm):
             "date_submitted",
             "image",
         )
+        widgets = {
+            'date_submitted': forms.DateInput(attrs={'data-fieldtype': 'date'}),
+        }
 
 
 class RosterPlacementForm(ModelForm):
