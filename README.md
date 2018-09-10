@@ -18,13 +18,35 @@ SDCPeople also requires the following to be implemented in the Django project.  
 + A functioning administration system with the ability to administer user permissions
 + A login page
 + A url entry named 'home'.  This is described in the installation section.
++ Pillow (`pip install Pillow`)
 
 # Installation
 
 ## Get the files
 
-From the project root directory (the directory with manage.py in it) clone the repository from github.org/bnmng/sdcpeople
-`git clone https://github.com/bnmng/sdcpeople`
+Get the files from github.org/bnmng/sdcpeople.  Your directory structure should be as follows, assuming "sdcmanager" is the name of your Django project and 
+of your root directory.  
+
+sdcmanager
+|-- manage.py
+|-- sdcmanager
+|   |-- __init__.py
+|   |-- settings.py
+|   |-- urls.py
+|    -- wsgi.py
+ -- sdcpeople
+    |-- README.md
+    |-- __init__.py
+    |-- admin.py
+    |-- apps.py
+    |-- forms.py
+    |-- migrations
+    |-- models.py
+    |-- static
+    |-- templates
+    |-- tests.py
+    |-- urls.py
+     -- views.py
 
 ## Update settings.py
 
@@ -47,7 +69,11 @@ INSTALLED_APPS = [
 
 ## Update urls.py
 
-`
+Make sure the following import is in urls.py
+`from django.conf.urls import include`
+
+from django.views.generic import RedirectView, TemplateView
+
 Add the SDC urls to the projects's urls.py
 
 `path('sdcpeople/', include('sdcpeople.urls')),`
@@ -62,9 +88,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/sdcpeople/'),name='home')
 ]
 `
-
-Also in urls.py, make sure the following import line is present
-` from django.conf.urls import include`
 
 SDCPeople requires a url named 'home', because there is an item labeled 'Home' in the menubar.  The url of that item can be whatever you want.  If you want  the home 
 item to point the home screen of the SDCPeople app, then, in your project's urls.py,  import RedirectView from django.views.generic
