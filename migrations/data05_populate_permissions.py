@@ -17,4 +17,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(populate_group_permissions)
-    ]`
+    ]
