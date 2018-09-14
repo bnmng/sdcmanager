@@ -276,6 +276,19 @@
             </div>
             <div class="row">
                 <div class="label">
+                    Notes
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        {{ voxes.empty_form.notes }}
+                    </div>
+                    <div class="help">
+                        {{ voxes.empty_form.notes.help_text }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">
                     Is Primary
                 </div>
                 <div class="fields">
@@ -800,7 +813,7 @@
         if( document.getElementById('checkbox_letter-name-fill').checked == true ) {
             var targetName = 'id_letter_name';
             var sourceNames = [ 'id_title', 'id_last_name' ];
-            fillIn( target_name, source_names );
+            fillIn( targetName, sourceNames );
         }
     }
 
