@@ -72,21 +72,9 @@ Make sure the following import is in urls.py
 
     from django.conf.urls import include  
   
-from django.views.generic import RedirectView, TemplateView  
-  
 Add the SDC urls to the projects's urls.py  
   
     path('sdcpeople/', include('sdcpeople.urls')),  
-  
-So the urlpatterns section of urls.py should look something like  
-  
-    urlpatterns = [  
-        path('accounts/', include('django.contrib.auth.urls')),  
-        path('accounts/profile/', TemplateView.as_view(template_name='registration/profile.html'), name='user_profile'),  
-        path('admin/', admin.site.urls),  
-        path('sdcpeople/', include('sdcpeople.urls')),  
-        path('', RedirectView.as_view(url='/sdcpeople/'),name='home')  
-    ]  
 
 SDCPeople requires a url named 'home', because there is an item labeled 'Home' in the menubar.  The url of that item can be whatever you want.  If you want  the home 
 item to point the home screen of the SDCPeople app, then, in your project's urls.py,  import RedirectView from django.views.generic  
@@ -96,6 +84,22 @@ item to point the home screen of the SDCPeople app, then, in your project's urls
 and add the following to your urlpatterns:  
 
     path('', RedirectView.as_view(url='/sdcpeople/'),name='home')  
+  
+This is an example of sdcmanager/urls.py
+  
+    from django.contrib import admin
+    from django.urls import path
+    from django.conf.urls import include
+    from django.views.generic import RedirectView, TemplateView
+
+    urlpatterns = [
+        path('accounts/', include('django.contrib.auth.urls')),
+        path('accounts/profile/', TemplateView.as_view(template_name='registration/profile.html'), name='user_profile'),
+        path('admin/', admin.site.urls),
+        path('sdcpeople/', include('sdcpeople.urls')),
+        path('', RedirectView.as_view(url='/sdcpeople/'),name='home')
+    ]
+
 
 ## Perform the migrations
 
@@ -103,7 +107,7 @@ From the project root directory run
 
     python manage.py migrate  
 
-Hopefull that went smoothly.    
+Hopefully that went smoothly.    
 
 ## Add permissions for users
 

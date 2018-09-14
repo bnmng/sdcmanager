@@ -236,10 +236,10 @@ class Txtmsg(models.Model):
 
 class Vox(models.Model):
 
-    number = models.CharField('Number', max_length=30, help_text='What is this person\'s voice phone number. It can include additional info like extensions?')
+    number = models.CharField('Number', max_length=30, help_text='What is this person\'s voice phone number?  This can include extentions.')
     primary = models.BooleanField('Is Primary', help_text='Is this the primary voice number?')
     restrict = models.BooleanField('Restrict Use', help_text='Should this number not be used for call lists and automated calls?')
-    notes = models.CharField('Notes', max_length=255, blank=True, help_text='What are notes about this phone (ex "Ask for Sarg", "Don\'t call before noon")? ')
+    notes = models.CharField('Notes', max_length=255, blank=True, help_text='What are notes about this phone (ex "Ask for the floor manger", or "Don\'t call before noon")? ')
     person = models.ForeignKey(Person, on_delete=models.CASCADE, help_text='For which person is this phone?')
 
     def __str__(self):
