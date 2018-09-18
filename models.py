@@ -131,7 +131,7 @@ class Person(models.Model):
     vfvid = models.CharField('Voter File Van ID', max_length=20, blank=True, help_text='What is this person\'s voter File VAN ID?')
     lcvid = models.CharField('Local Van ID', max_length=20, blank=True, help_text='What is this person\'s local VAN ID (aka My Campaign ID)?')
 
-    membershiptype = models.ForeignKey(MembershipType, on_delete=models.PROTECT, blank=True, null=True, help_text='What is the type of this person\'s membership?')
+    membershiptype = models.ForeignKey(MembershipType, null=True, on_delete=models.PROTECT, help_text='What is the type of this person\'s membership?')
 
     def list_groups(self):
         return ', '.join([ '{0}: {1}'.format( group.type, group.name ) for district in group_set.all() ] )
@@ -264,7 +264,7 @@ class RosterPlacement(models.Model):
 
 class Residency(models.Model):
 
-    district = models.ForeignKey(District, on_delete=models.CASCADE, help_text='What is the district in which the person lives?')
+    district = models.ForeignKey(District, null=True, blank=True, on_delete=models.CASCADE, help_text='What is the district in which the person lives?')
     person = models.ForeignKey(Person, on_delete=models.CASCADE, help_text='Who is the person who lives in this district?')
 
     def __str__(self):

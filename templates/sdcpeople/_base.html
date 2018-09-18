@@ -24,7 +24,7 @@
 		        <li>
                     {{ user.get_username }}
 		        </li>
-		        <li><a href="{% url 'logout'%}?next={{request.path}}" id="a_logout">Logout</a></li>
+		        <li><a href="{% url 'logout' %}?next={{request.path}}" id="a_logout">Logout</a></li>
 		        <li><a href="{% url 'sdcpeople' %}">People</a>
 		        <li><a href="{% url 'groups' %}">Groups</a>
 {% else %}

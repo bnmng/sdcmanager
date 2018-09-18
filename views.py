@@ -151,6 +151,11 @@ class PersonCreate(PermissionRequiredMixin, CreateView):
         districttype_all = DistrictType.objects.all()
         districttype_count = DistrictType.objects.count()
 
+        districttype_names=[]
+        for districttype in districttype_all:
+            districttype_names.append( districttype.name )
+        context['districttype_names'] = districttype_names
+
         ApplicationFormSet = inlineformset_factory(Person, Application, form=ApplicationForm, extra=1, fields='__all__')
         EmailFormSet = inlineformset_factory(Person, Email, form=EmailForm, extra=1, fields='__all__')
         GroupMembershipFormSet = inlineformset_factory(Person, GroupMembership, form=GroupMembershipForm, extra=1, fields='__all__')
@@ -169,10 +174,11 @@ class PersonCreate(PermissionRequiredMixin, CreateView):
             groupmemberships = GroupMembershipFormSet(self.request.POST, instance = self.object)
             context['groupmemberships'] = groupmemberships
 
-            residencies = ResidencyFormSet(self.request.POST, instance = self.object)
+            residencies = ResidencyFormSet(self.request.POST, instance = self.object )
+
             for i in range( districttype_count):
                 residencies.forms[i].fields['district'].queryset = District.objects.filter(districttype__id=districttype_all[i].id)
-                residencies.forms[i].fields['districttype_name'].initial = districttype_all[i].name
+                residencies.forms[i].fields['district'].label =  districttype_all[i].name
             context['residencies'] = residencies
 
             txtmsgs = TxtmsgFormSet(self.request.POST, instance = self.object)
@@ -195,8 +201,7 @@ class PersonCreate(PermissionRequiredMixin, CreateView):
             residencies = ResidencyFormSet( instance = self.object )
             for i in range( districttype_count):
                 residencies.forms[i].fields['district'].queryset = District.objects.filter(districttype__id=districttype_all[i].id)
-                residencies.forms[i].fields['districttype_name'].initial = districttype_all[i].name
-                context['district_label_' + str(i)] = districttype_all[i].name
+                residencies.forms[i].fields['district'].label =  districttype_all[i].name
             context['residencies'] = residencies
 
             txtmsgs = TxtmsgFormSet( instance = self.object )
@@ -280,7 +285,7 @@ class PersonUpdate(PermissionRequiredMixin, UpdateView):
             residencies = ResidencyFormSet(self.request.POST, instance = self.object)
             for i in range( districttype_count):
                 residencies.forms[i].fields['district'].queryset = District.objects.filter(districttype__id=districttype_all[i].id)
-                residencies.forms[i].fields['districttype_name'].initial = districttype_all[i].name
+                residencies.forms[i].fields['district'].label =  districttype_all[i].name
             context['residencies'] = residencies
 
             txtmsgs = TxtmsgFormSet(self.request.POST, instance = self.object)
@@ -303,7 +308,7 @@ class PersonUpdate(PermissionRequiredMixin, UpdateView):
             residencies = ResidencyFormSet( instance = self.object )
             for i in range( districttype_count):
                 residencies.forms[i].fields['district'].queryset = District.objects.filter(districttype__id=districttype_all[i].id)
-                residencies.forms[i].fields['districttype_name'].initial = districttype_all[i].name
+                residencies.forms[i].fields['district'].label =  districttype_all[i].name
             context['residencies'] = residencies
 
             txtmsgs = TxtmsgFormSet( instance = self.object )
@@ -327,43 +332,27 @@ class PersonUpdate(PermissionRequiredMixin, UpdateView):
         applications = context['applications']
         if applications.is_valid():
             applications.save()
-        else:
-            print (applications.errors)
 
         txtmsgs = context['txtmsgs']
         if txtmsgs.is_valid():
             txtmsgs.save()
-        else:
-            print(txtmsgs.errors)
 
         emails = context['emails']
         if emails.is_valid():
             emails.save()
-        else:
-            print(emails.errors)
 
         groupmemberships = context['groupmemberships']
         if groupmemberships.is_valid():
             groupmemberships.save()
-        else:
-            print(groupmemberships.errors)
+
 
         residencies = context['residencies']
         if residencies.is_valid():
             residencies.save()
-        else:
-            print(residencies.errors)
 
         voxes = context['voxes']
-        for vox in voxes:
-            for cd in vox.changed_data:
-                print ( cd )
-
         if voxes.is_valid():
             voxes.save()
-        else:
-            print("vox errors")
-            print(voxes.errors)
 
         return super().form_valid(form)
 

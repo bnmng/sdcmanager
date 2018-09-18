@@ -321,10 +321,10 @@
         {% for txtmsg_form in txtmsgs.forms %}
         {{ txtmsg_form.id }}
         <div class="section txtmsg_div">
-            Phone #{{ forloop.counter }}
+            Text Phone #{{ forloop.counter }}
             <div class="row">
                 <div class="label">
-                    Number
+                    Text Number
                 </div>
                 <div class="fields">
                     <div class="field">
@@ -350,7 +350,7 @@
             </div>
             <div class="row">
                 <div class="label">
-                     Delete Phone #{{ forloop.counter }} 
+                     Delete Text Phone #{{ forloop.counter }} 
                 </div>
                 <div class="fields">
                     <div>
@@ -379,7 +379,7 @@
             {{ form.id }}
             <div class="row">
                 <div class="label">
-                    Number
+                    Text Number
                 </div>
                 <div class="fields">
                     <div class="field">
@@ -528,7 +528,7 @@
         {{ residency_form.id }}
         <div class="row">
             <div class="label">
-                {{ residency_form.districttype_name.value }}
+               {{ residency_form.district.label }}
             </div>
             <div class="fields">
                 <div class="field">
@@ -796,7 +796,7 @@
 
     }
 
-    function fillInNames () {
+    function fillInNames() {
         fillInCertificateName();
         fillInLetterName();
     }
@@ -834,10 +834,6 @@
 
     function copyMailingFromVoting() {
         document.getElementById( 'id_mailing_address' ).value = document.getElementById( 'id_voting_address' ).value;
-    }
-
-    function copyPreferedFromFirst() {
-        document.getElementById( 'id_prefered_name' ).value = document.getElementById( 'id_first_name' ).value;
     }
 
     for(i=0; i<modelNames.length; i++) {

@@ -68,6 +68,11 @@ class ResidencyForm(ModelForm):
         model = Residency
         fields =  '__all__'
 
+    def has_changed(self, *args, **kwargs):
+        if self.instance.pk is None:
+            return True
+        return super().has_changed(*args, **kwargs)
+
 class GroupMembershipForm(ModelForm):
     class Meta:
         model = GroupMembership
