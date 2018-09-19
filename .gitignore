@@ -1,9 +1,0 @@
-.gitmessage
-.gitmessage.swp
-.todo
-__pycache__/
-gitmessage.md
-migrations/__pycache__/
-migrations/suffolk.sql
-tests.py
-tests/
