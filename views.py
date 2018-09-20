@@ -17,8 +17,7 @@ import datetime
 import inspect
 import logging
 
-
-logger=logging.getLogger('django')
+logger = logging.getLogger('sdcpeople')
 
 def get_inspect( info='' ):
     return ( '%s, %s, %s' % ( inspect.currentframe().f_back.f_code.co_name, inspect.currentframe().f_back.f_lineno, info ) )
@@ -144,6 +143,8 @@ class PersonCreate(PermissionRequiredMixin, CreateView):
     model = Person
     form_class=PersonForm
 
+    inline_model_names = ('applications', 'emails', 'groupmemberships', 'residencies', 'txtmsgs', 'voxes',)
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -213,41 +214,24 @@ class PersonCreate(PermissionRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        form.instance._status = 1
-        form.instance._created_by = self.request.user
-        form.instance._created_date = datetime.datetime.now()
-        form.instance._mod_by = self.request.user
-        form.instance._mod_date = datetime.datetime.now()
     
         self.object = form.save()
 
         context = self.get_context_data()
 
-        applications = context['applications']
-        if applications.is_valid():
-            applications.save()
+        inline_forms_valid=True;
 
-        emails = context['emails']
-        if emails.is_valid():
-            emails.save()
+        for model_name in self.inline_model_names:
+            context_form = context[model_name]
+            if context_form.is_valid():
+                context_form.save()
+            else:
+                inline_forms_valid=False;
 
-        groupmemberships = context['groupmemberships']
-        if groupmemberships.is_valid():
-            groupmemberships.save()
+        if inline_forms_valid == False:
+            return super().form_invalid(form)
 
-        residencies = context['residencies']
-        if residencies.is_valid():
-            residencies.save()
-
-        txtmsgs = context['txtmsgs']
-        if txtmsgs.is_valid():
-            txtmsgs.save()
-
-        voxes = context['voxes']
-        if voxes.is_valid():
-            voxes.save()
-
-        return super(PersonCreate, self).form_valid(form)
+        return super().form_valid(form)
 
 class PersonDetailView(LoginRequiredMixin, DetailView ):
     model = Person
@@ -256,6 +240,8 @@ class PersonUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'sdcpeople.change_person'
     model = Person
     form_class=PersonForm 
+
+    inline_model_names = ('applications', 'emails', 'groupmemberships', 'residencies', 'txtmsgs', 'voxes',)
 
     def get_context_data(self, **kwargs):
 
@@ -321,38 +307,52 @@ class PersonUpdate(PermissionRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-
-        form.instance_mod_by = self.request.user
-        form.instance._mod_date = datetime.datetime.now()
-
+    
         self.object = form.save()
 
         context = self.get_context_data()
 
-        applications = context['applications']
-        if applications.is_valid():
-            applications.save()
+        inline_forms_valid=True;
 
-        txtmsgs = context['txtmsgs']
-        if txtmsgs.is_valid():
-            txtmsgs.save()
+        for model_name in self.inline_model_names:
+            context_form = context[model_name]
+            if context_form.is_valid():
+                context_form.save()
+            else:
+                inline_forms_valid=False;
 
-        emails = context['emails']
-        if emails.is_valid():
-            emails.save()
+        if inline_forms_valid == False:
+            return super().form_invalid(form)
 
-        groupmemberships = context['groupmemberships']
-        if groupmemberships.is_valid():
-            groupmemberships.save()
+        return super().form_valid(form)
+
+########
 
 
-        residencies = context['residencies']
-        if residencies.is_valid():
-            residencies.save()
-
-        voxes = context['voxes']
-        if voxes.is_valid():
-            voxes.save()
+#        applications = context['applications']
+#        if applications.is_valid():
+#            applications.save()
+#
+#        txtmsgs = context['txtmsgs']
+#        if txtmsgs.is_valid():
+#            txtmsgs.save()
+#
+#        emails = context['emails']
+#        if emails.is_valid():
+#            emails.save()
+#
+#        groupmemberships = context['groupmemberships']
+#        if groupmemberships.is_valid():
+#            groupmemberships.save()
+#
+#
+#        residencies = context['residencies']
+#        if residencies.is_valid():
+#            residencies.save()
+#
+#        voxes = context['voxes']
+#        if voxes.is_valid():
+#            voxes.save()
 
         return super().form_valid(form)
 
@@ -392,7 +392,7 @@ class GroupCreate(PermissionRequiredMixin, CreateView):
         if groupmemberships.is_valid():
             groupmemberships.save()
 
-        return super(GroupCreate, self).form_valid(form)
+        return super().form_valid(form)
 
 class GroupDetailView(LoginRequiredMixin, DetailView ):
     model = Group
@@ -468,7 +468,7 @@ class RosterCreate(PermissionRequiredMixin, CreateView):
         if rosterplacements.is_valid():
             rosterplacements.save()
 
-        return super(RosterCreate, self).form_valid(form)
+        return super().form_valid(form)
 
 class RosterDetailView(LoginRequiredMixin, DetailView ):
     model = Roster

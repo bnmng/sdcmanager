@@ -177,7 +177,7 @@
                     {{ form.mailing_address }}
                 </div>
                 <div class="field-buttons">
-                        <button type="button" id="button_mailing-eq-voting">Same</button>
+                    <input type="checkbox" checked="checked"  id="checkbox_mailing-address-fill" >Same as Voting
                 </div>
                 <div class="help">
                     {{ form.mailing_address.help_text }}
@@ -193,6 +193,16 @@
         {{ vox_form.id }}
         <div class="section vox_div">
             Phone #{{ forloop.counter }}
+            {% if vox_form.errors %}
+            <div class="row errors">
+                <div class="label">
+                    Errors
+                </div>
+                <div class="fields">
+                    {{ vox_form.errors }}
+                </div>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="label">
                     Number
@@ -321,6 +331,16 @@
         {% for txtmsg_form in txtmsgs.forms %}
         {{ txtmsg_form.id }}
         <div class="section txtmsg_div">
+            {% if txtmsg_form.errors %}
+            <div class="row errors">
+                <div class="label">
+                    Errors
+                </div>
+                <div class="fields">
+                    {{ txtmsg_form.errors }}
+                </div>
+            </div>
+            {% endif %}
             Text Phone #{{ forloop.counter }}
             <div class="row">
                 <div class="label">
@@ -424,6 +444,16 @@
         {% for email_form in emails.forms %}
         {{ email_form.id }}
         <div class="section email_div">
+            {% if email_form.errors %}
+            <div class="row errors">
+                <div class="label">
+                    Errors
+                </div>
+                <div class="fields">
+                    {{ email_form.errors }}
+                </div>
+            </div>
+            {% endif %}
             Email #{{ forloop.counter }}
             <div class="row">
                 <div class="label">
@@ -548,6 +578,16 @@
         {% for groupmembership_form in groupmemberships.forms %}
         {{ groupmembership_form.id }}
         <div class="section groupmembership_div">
+            {% if groupmembership_form.errors %}
+            <div class="row errors">
+                <div class="label">
+                    Errors
+                </div>
+                <div class="fields">
+                    {{ groupmembership_form.errors }}
+                </div>
+            </div>
+            {% endif %}
             Group #{{ forloop.counter }}
             <div class="row">
                 <div class="label">
@@ -653,7 +693,18 @@
         {% for application_form in applications.forms %}
         {{ application_form.id }}
         <div class="section application_div">
+            {% if application_form.errors %}
+            <div class="row errors">
+                <div class="label">
+                    Errors
+                </div>
+                <div class="fields">
+                    {{ application_form.errors }}
+                </div>
+            </div>
+            {% endif %}
             Application #{{ forloop.counter }}
+            {{ application_form.errors }}
             <div class="row">
                 <div class="label">
                     Date
@@ -761,6 +812,30 @@
 
     var modelNames = ["application", "vox", "txtmsg", "email", "groupmembership"];
 
+    function addEventListeners( el ) {
+
+        var correctableDates = el.querySelectorAll('[data-fieldtype="date"]');
+        for ( cd = 0; cd<correctableDates.length; cd++) {
+            correctableDates[cd].addEventListener('change', function(event) {
+                correctDate(event);
+            });
+        }
+
+        var correctablePhones = el.querySelectorAll('[data-fieldtype="phone"]');
+        for ( cd = 0; cd<correctablePhones.length; cd++) {
+            correctablePhones[cd].addEventListener('change', function(event) {
+                correctPhone(event);
+            });
+        }
+        
+        var primaryCheckboxes = el.querySelectorAll('[type="checkbox"][name$="primary"]');
+        for ( pc = 0; pc<primaryCheckboxes.length; pc++) {
+            primaryCheckboxes[pc].addEventListener('change', function(event) {
+                primaryOnlyOne(event);
+            });
+        }
+    }
+
     function addInlineForm(e) {
         var modelName = '';
 
@@ -771,6 +846,7 @@
                 modelName = modelNames[i];
             }
         }
+
         formCount=document.getElementsByClassName(modelName + '_div').length;
 
         var newFormDiv = document.getElementById('div_' + modelName + '-empty').cloneNode(true);
@@ -796,6 +872,40 @@
 
     }
 
+    function copyMailingFromVoting() {
+        document.getElementById( 'id_mailing_address' ).value = document.getElementById( 'id_voting_address' ).value;
+    }
+
+    function correctDate( event ) {
+
+        var month;
+        var dayofmonth;
+
+        var newDate = new Date ( event.target.value );
+        if ( !isNaN( newDate ) ) {
+            getdate = newDate.getDate();
+            chardate = getdate > 9 ? "" + getdate : "0" + getdate;
+            getmonth = newDate.getMonth() + 1;
+            charmonth = getmonth > 9 ? "" + getmonth : "0" + getmonth;
+            event.target.value = newDate.getFullYear() + '-' + charmonth  + '-' + chardate;
+        }
+        else {
+            alert ("Unable to parse that date")
+        }
+    }
+
+    function correctPhone( event ) {
+
+        var phone = event.target.value ;
+        var newPhone = phone.replace(/.*(\d{3})[\)\s\-]*(\d{3})[\s\-]*(\d{4})/,"$1-$2\-$3");
+        event.target.value = newPhone;
+    }
+
+
+    function deleterecord() {
+    }
+
+
     function fillInNames() {
         fillInCertificateName();
         fillInLetterName();
@@ -817,6 +927,14 @@
         }
     }
 
+    function fillInMailingAddress (  ) {
+        if( document.getElementById('checkbox_mailing-address-fill').checked == true ) {
+            var targetName = 'id_mailing_address';
+            var sourceNames = [ 'id_voting_address' ];
+            fillIn( targetName, sourceNames );
+        }
+    }
+
     function fillIn( target, sourceNames ) {
         var fillInValue = '';
         var sourcelen = sourceNames.length;
@@ -832,60 +950,23 @@
         document.getElementById( target ).value = fillInValue;
     }
 
-    function copyMailingFromVoting() {
-        document.getElementById( 'id_mailing_address' ).value = document.getElementById( 'id_voting_address' ).value;
+    function primaryOnlyOne(e) {
+        checkbox = e.currentTarget;
+        if(checkbox.checked) {
+            checkboxName = checkbox.getAttribute("name");
+            checkboxModelName = checkboxName.substring(0,checkboxName.indexOf('_'));
+            modelCheckboxes = document.querySelectorAll('[type="checkbox"][name^="'+checkboxModelName+'"][name$="primary"]');
+            for ( i = 0; i< modelCheckboxes.length; i++ ) {
+                if( modelCheckboxes[i].id != checkbox.id ) {
+                    modelCheckboxes[i].checked=false;
+                }
+            }
+        }
     }
 
     for(i=0; i<modelNames.length; i++) {
         document.getElementById('button_' + modelNames[i] + '-add').addEventListener('click', addInlineForm);
     }
-
-    function deleterecord() {
-    }
-
-    function correctDate( event ) {
-
-        var month;
-        var dayofmonth;
-
-        var newDate = new Date ( event.target.value );
-        if ( !isNaN( newDate ) ) {
-            getdate = newDate.getDate();
-            chardate = getdate > 9 ? "" + getdate : "0" + getdate;
-            getmonth = newDate.getMonth() + 1;
-            charmonth = getmonth > 9 ? "" + getmonth : "0" + getmonth;
-            event.target.value = newDate.getFullYear() + '-' + charmonth  + '-' + chardate;
-        }
-        else {
-            alert ("Unable to parse that date")
-        }
-    }
-
-    function addEventListeners( el ) {
-
-        var correctableDates = el.querySelectorAll('[data-fieldtype="date"]');
-        for ( cd = 0; cd<correctableDates.length; cd++) {
-            correctableDates[cd].addEventListener('change', function(event) {
-                correctDate(event);
-            });
-        }
-
-        var correctablePhones = el.querySelectorAll('[data-fieldtype="phone"]');
-        for ( cd = 0; cd<correctablePhones.length; cd++) {
-            correctablePhones[cd].addEventListener('change', function(event) {
-                correctPhone(event);
-            });
-        }
-
-    }
-
-    function correctPhone( event ) {
-
-        var phone = event.target.value ;
-        var newPhone = phone.replace(/.*(\d{3})[\)\s\-]*(\d{3})[\s\-]*(\d{4})/,"$1-$2\-$3");
-        event.target.value = newPhone;
-    }
-
 
     document.getElementById('id_certificate_name').addEventListener('keydown', function() { document.getElementById('checkbox_certificate-name-fill').checked = false });
     document.getElementById('id_letter_name').addEventListener('keydown', function() { document.getElementById('checkbox_letter-name-fill').checked = false });
@@ -899,7 +980,8 @@
     document.getElementById('id_last_name').addEventListener('change', fillInNames);
     document.getElementById('id_suffixes').addEventListener('keydown', fillInNames);
     document.getElementById('id_suffixes').addEventListener('change', fillInNames);
-    document.getElementById('button_mailing-eq-voting').addEventListener('click', copyMailingFromVoting );
+    document.getElementById('id_voting_address').addEventListener('keydown', fillInMailingAddress);
+    document.getElementById('id_mailing_address').addEventListener('keydown', function() { document.getElementById('checkbox_mailing-address-fill').checked = false });
 
     addEventListeners(document);
 

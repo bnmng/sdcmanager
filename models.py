@@ -125,8 +125,8 @@ class Person(models.Model):
 
     birth_date = models.DateField('Date of Birth', null=True, blank=True, help_text='When was this person born?')
 
-    voting_address = models.TextField('Voting Address', max_length=1000, blank=True, help_text='What is this person\'s voting address?')
-    mailing_address = models.TextField('Mailing Address', max_length=1000, blank=True, help_text='What is this person\'s mailing address?')
+    voting_address = models.CharField('Voting Address', max_length=1000, blank=True, help_text='What is this person\'s voting address?')
+    mailing_address = models.CharField('Mailing Address', max_length=1000, blank=True, help_text='What is this person\'s mailing address?')
 
     vfvid = models.CharField('Voter File Van ID', max_length=20, blank=True, help_text='What is this person\'s voter File VAN ID?')
     lcvid = models.CharField('Local Van ID', max_length=20, blank=True, help_text='What is this person\'s local VAN ID (aka My Campaign ID)?')

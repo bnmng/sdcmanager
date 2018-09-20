@@ -19,6 +19,7 @@ SDCPeople also requires the following to be implemented in the Django project.  
 + A login page
 + A url entry named 'home'.  This is described in the installation section.
 + Pillow (`pip install Pillow`)
++ MEDIA_ROOT configured in settings
 
 # Installation
 
